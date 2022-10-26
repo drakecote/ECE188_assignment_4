@@ -6,44 +6,45 @@ namespace Oculus.Interaction.Samples
 {
     public class GestureDetection : MonoBehaviour
     {
-
+        private bool isThumbup = false;
+        private bool isThumbdown = false;
         [SerializeField] private ActiveStateSelector thumbup;
         [SerializeField] private ActiveStateSelector thumbdown;
         [SerializeField] private GameObject cube;
-        private bool isthumbup = false;
-        private bool isthumbdown = false;
 
-        private Vector3 scaleChange = new Vector3(0.01f, 0.01f, 0.01f);
+        private Vector3 scale_inc = new Vector3(0.01f,0.01f,0.01f);
+
         // Start is called before the first frame update
         void Start()
         {
-            
-            thumbup.WhenSelected += () => {isthumbup = true;};
-            thumbup.WhenUnselected += () => {isthumbup = false;};
-            thumbdown.WhenSelected += () => {isthumbdown = true;};
-            thumbdown.WhenUnselected += () => {isthumbdown = false;};
+            thumbup.WhenSelected += () => {isThumbup = true;};
+            thumbup.WhenUnselected += () => {isThumbup = false;};
+            thumbdown.WhenSelected += () => {isThumbdown = true;};
+            thumbdown.WhenUnselected += () => {isThumbdown = false;};
         }
 
-        private void Sizeup(){
-            cube.transform.localScale += scaleChange;
-            Debug.Log("thumb up detected"); 
+        // Update is called once per frame
+        void Update()
+        {
+            if(isThumbup) Sizeup();
+            if(isThumbdown) Sizedown();
         }
-        private void Sizedown(){
-            if (cube.transform.localScale.y > 0){
-                cube.transform.localScale -= scaleChange;
-                Debug.Log("thumb down detected"); 
+
+        private void Sizeup()
+        {
+            cube.transform.localScale += scale_inc;
+            Debug.Log("thumb up detected");
+        }
+
+        private void Sizedown()
+        {
+            if (cube.transform.localScale.y > 0)
+            {
+                cube.transform.localScale -= scale_inc;
+                Debug.Log("thumb down detected");
             }
+            Debug.Log("thumb down is detected but I am too small to shrink!");
             
-            Debug.Log("thumb down detected but I am too small to shrink :("); 
-            
-        }
-        
-        void Update(){
-            // Debug.Log(isthumbup);
-            if(isthumbup) Sizeup();
-            if(isthumbdown) Sizedown();
-
         }
     }
 }
-
