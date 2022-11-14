@@ -26,6 +26,7 @@ namespace Oculus.Interaction.HandPosing
         [SerializeField] private HandGrabInteractor handGrab; // drag the dominant hand into this blank in the inspector
         
         [SerializeField] private GameObject cube; // drag the target cube into this blank in the inspector
+        [SerializeField] private GameObject target; // This is the destination of the target cube
         
         private bool isGrabbed = false; // if the object is grabbed this frame, isGrabbed is true
         private bool wasGrabbed = false; // if the object was grabbed last frame, wasGrabbed is true
@@ -125,10 +126,27 @@ namespace Oculus.Interaction.HandPosing
             }
             // stop counting time and distance once a user releases the cube
             if (isEnd){
-                float endPos = cube.transform.position.x;
-                grabDistance = Mathf.Abs(endPos - initialPos);
-                grabTime = Time.time - initialTime;
-                WriteToFile(grabTime, grabSize, grabDistance);
+                /*
+                    1. Add another cube, called Target Cube (at the beginning)
+                    2. If cube.transform.position and targetCube.transform.position are sufficiently close (do the math for this), then:
+                        a. WriteToFile, display SOMETHING (idk what) to indicate success
+                    3. If cube positions are not close enough
+                        b. Reset (optional) and display something to indicate failure
+                */
+                float cubePos = cube.transform.position.x;
+                float targetPos = target.transform.position.x;
+                double margin = (0.1 * cube.transform.localScale.x);
+                float distance = Math.Abs(cubePos - targetPos);
+                if (distance <= margin){
+                    System.Console.WriteLine("success");
+                    float endPos = cube.transform.position.x;
+                    grabDistance = Mathf.Abs(endPos - initialPos);
+                    grabTime = Time.time - initialTime;
+                    WriteToFile(grabTime, grabSize, grabDistance);
+                }
+                else{
+                    System.Console.WriteLine("Failure");
+                }
             }   
 
             wasGrabbed = isGrabbed;
